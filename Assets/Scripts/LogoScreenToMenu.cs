@@ -10,7 +10,7 @@ public class LogoScreenToMenu : MonoBehaviour
     private void Start()
     {
         videoPlayer = GetComponent<UnityEngine.Video.VideoPlayer>();
-        videoPlayer.url = System.IO.Path.Combine(Application.streamingAssetsPath, "StartAnimation.webm");
+        videoPlayer.url = System.IO.Path.Combine(Application.streamingAssetsPath, "StartAnimation.mp4");
         videoPlayer.Play();
     }
 
