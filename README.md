@@ -1,2 +1,2 @@
-# TypingGameUnity
-Learning and developing with unity
+Learning unity :)
+
