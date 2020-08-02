@@ -5,24 +5,45 @@ using UnityEngine;
 public class SpawnManager : MonoBehaviour
 {
     public GameObject enemyObject;
-    public GameManager gameManager;
+    private GameManager gameManager;
+    public GameObject placedWall;
+    public Camera upCamera;
+    private bool isSpawning;
     // Start is called before the first frame update
     void Start()
     {
-        StartCoroutine(spawnenemies());
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        StartCoroutine(spawnenemies(gameManager.level));
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if (!isSpawning && !gameManager.planningMode)
+        {
+            StartCoroutine(spawnenemies(gameManager.level));
+            isSpawning = true;
+        }
     }
 
-    public IEnumerator spawnenemies()
+    public IEnumerator spawnenemies(int level)
     {
-        Instantiate(enemyObject, CreateRandomSpawnLocation(), transform.rotation);
-        yield return new WaitForSeconds(2);
-        StartCoroutine(spawnenemies());
+        if (!gameManager.planningMode)
+        {
+            float interval = Random.Range(1 - 0.1f * 1 / level, Random.Range(1, 3));
+            int spawnAmount = (int)Random.Range(1, level);
+
+            for (int i = 0; i < spawnAmount; i++)
+            {
+                Instantiate(enemyObject, CreateRandomSpawnLocation(), transform.rotation);
+            }
+            yield return new WaitForSeconds(interval);
+            StartCoroutine(spawnenemies(gameManager.level));
+        }
+        else
+        {
+            isSpawning = false;
+        }
     }
 
 
@@ -39,19 +60,45 @@ public class SpawnManager : MonoBehaviour
 
         // Generate spawn location that is under allowed area
         bool acceptedLocation = false;
-        Vector3 spawnPos = new Vector3(0,0,0);
+        Vector3 spawnPos = new Vector3(0, 0, 0);
 
         while (!acceptedLocation)
         {
             spawnPos = new Vector3(Random.Range(eastLimit, westLimit),
                                             0.2f,
                                             Random.Range(southLimit, northLimit));
-            if(Vector3.Distance(doorPosition,spawnPos) > 10)
+            if (Vector3.Distance(doorPosition, spawnPos) > 10)
             {
                 acceptedLocation = true;
             }
         }
 
         return spawnPos;
+    }
+
+    // Method for spawning wall obstacle on mouse location
+    public void spawnWallOnMouseLocation()
+    {
+        Instantiate(placedWall, getMouseLocation(), transform.rotation);
+    }
+
+    // Method for getting relative mouse location
+    public Vector3 getMouseLocation()
+    {
+        Vector3 mouseLocation;
+        Vector3 mouse = Input.mousePosition;
+        Ray castPoint = upCamera.ScreenPointToRay(mouse);
+        RaycastHit hit;
+        if (Physics.Raycast(castPoint, out hit, Mathf.Infinity))
+        {
+            mouseLocation = hit.point;
+            return mouseLocation;
+        }
+        else
+        {
+            return new Vector3(0, 0, 0);
+        }
+
+
     }
 }

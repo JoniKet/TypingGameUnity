@@ -28,7 +28,6 @@ public class UserTyping : MonoBehaviour
     void Update()
     {
 
-
         // Check if current input text matches any enemy text on the field
         enemies = GameObject.FindGameObjectsWithTag("Enemy");
         foreach(GameObject enemy in enemies)
@@ -43,7 +42,6 @@ public class UserTyping : MonoBehaviour
 
         // Update the user input
         
-
         // Backspace is pressed
         if (Input.GetKeyDown(KeyCode.Backspace))
         {
